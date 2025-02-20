@@ -1,4 +1,4 @@
-package com.mtrifonov.server;
+package com.mtrifonov.server.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

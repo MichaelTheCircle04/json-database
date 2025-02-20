@@ -1,57 +1,72 @@
-package com.mtrifonov.server;
+package com.mtrifonov.server.executors;
 
 
-import static com.mtrifonov.server.Command.Type.*;
+import static com.mtrifonov.server.domain.Command.Type.*;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.concurrent.locks.ReadWriteLock;
+
+import com.mtrifonov.server.dao.JsonDatabase;
+import com.mtrifonov.server.domain.Command;
+import com.mtrifonov.server.domain.Response;
 
 public class CommandExecutor {
 
-    private final ReadWriteLock lock;
     private final JsonDatabase db;
 
-    public CommandExecutor(ReadWriteLock lock, JsonDatabase db) {
-        this.lock = lock;
+    public CommandExecutor(JsonDatabase db) {
         this.db = db;
     }
 
     public Response execute(Command command) {
         
         if (command.getType() == SET) {
-            return executeSet();
+            return executeSet(command);
         } else if (command.getType() == GET) {
             return executeGet(command);
         } else if (command.getType() == DELETE) {
-            return executeDelete();
+            return executeDelete(command);
         } else {
             return Response.TERMINATED;
         }
     }
 
-    private Response executeSet() {
-        return null;
+    private Response executeSet(Command command) {
+        
+        Response response;
+
+        try {
+            db.set(command.getKey(), command.getValue());
+            response = Response.OK;
+        } catch (IOException e) {
+            response = Response.getErrorResponse(e.getMessage());
+        }
+
+        return response;
     }
 
     private Response executeGet(Command command) {
 
         Response response;
-        lock.readLock().lock();
 
         try {
-            var result = db.read(command.getKey());
-            response = Response.getResponseWithData(result);
+            response = db.read(command.getKey());
         } catch (IOException e) {
             response = Response.getErrorResponse(e.getMessage());
         } 
 
-        lock.readLock().unlock();
         return response;
     }
 
-    private Response executeDelete() {
-        return null;
+    private Response executeDelete(Command command) {
+
+        Response response;
+
+        try {
+            response = db.delete(command.getKey());
+        } catch (IOException e) {
+            response = Response.getErrorResponse(e.getMessage());
+        }
+
+        return response;
     }
 }

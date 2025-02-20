@@ -1,4 +1,4 @@
-package com.mtrifonov.server;
+package com.mtrifonov.server.executors;
 
 import java.io.IOException;
 import java.net.ServerSocket;

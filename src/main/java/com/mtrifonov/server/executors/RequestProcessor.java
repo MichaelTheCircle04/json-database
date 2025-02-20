@@ -1,4 +1,4 @@
-package com.mtrifonov.server;
+package com.mtrifonov.server.executors;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mtrifonov.server.domain.Command;
+import com.mtrifonov.server.domain.Response;
 
 public class RequestProcessor implements Runnable {
 
@@ -54,10 +56,11 @@ public class RequestProcessor implements Runnable {
             var response = executor.execute(command);
 
             if (response == Response.TERMINATED) {
+                out.println(mapper.writeValueAsString(response));
                 break;
             }
 
-            out.println(response);
+            out.println(mapper.writeValueAsString(response));
         }
 
         out.close();
