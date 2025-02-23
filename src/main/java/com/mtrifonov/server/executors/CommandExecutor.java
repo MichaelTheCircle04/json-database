@@ -8,6 +8,7 @@ import java.io.IOException;
 import com.mtrifonov.server.dao.JsonDatabase;
 import com.mtrifonov.server.domain.Command;
 import com.mtrifonov.server.domain.Response;
+import com.mtrifonov.server.utils.KeyConverter;
 
 public class CommandExecutor {
 
@@ -35,9 +36,9 @@ public class CommandExecutor {
         Response response;
 
         try {
-            db.set(command.getKey(), command.getValue());
+            db.set(KeyConverter.convert(command.getKey()), command.getValue());
             response = Response.OK;
-        } catch (IOException e) {
+        } catch (IOException | IndexOutOfBoundsException e) {
             response = Response.getErrorResponse(e.getMessage());
         }
 
@@ -49,7 +50,7 @@ public class CommandExecutor {
         Response response;
 
         try {
-            response = db.read(command.getKey());
+            response = db.read(KeyConverter.convert(command.getKey()));
         } catch (IOException e) {
             response = Response.getErrorResponse(e.getMessage());
         } 
@@ -62,7 +63,7 @@ public class CommandExecutor {
         Response response;
 
         try {
-            response = db.delete(command.getKey());
+            response = db.delete(KeyConverter.convert(command.getKey()));
         } catch (IOException e) {
             response = Response.getErrorResponse(e.getMessage());
         }

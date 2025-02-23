@@ -27,8 +27,9 @@ public class Response {
     public static final Response OK = Response.builder().status("OK").build();
     public static final Response TERMINATED = Response.builder().status("TERMINATED").message("Goodbye").terminate(true).build();
 
-    public static Response getNotFound(String[] key) {
-        return Response.builder().status("NOT_FOUND").message("Couldn't found key: " + String.join(", ", key)).build();
+    public static Response getNotFound(Key[] key) {
+        var path = createPath(key);
+        return Response.builder().status("NOT_FOUND").message("Couldn't found key: " + path).build();
     }
 
     public static Response getResponseWithData(String data) {
@@ -39,13 +40,29 @@ public class Response {
         return Response.builder().status("ERROR").message(message).build();
     }
 
-    public static Response getDeletedResponse(String[] key, boolean success) {
-        var path = "$." + String.join(".", key);
+    public static Response getDeletedResponse(Key[] key, boolean success) {
+        var path = createPath(key);
         var message = "Key " + path + " has been successfully deleted";
         if (success) {
             return Response.builder().status("DELETED").message(message).build();
         } else {
             return Response.builder().status("ERROR").message("Couldn't delete key " + path + " because couldn't find it").build();
         } 
+    }
+
+    private static String createPath(Key[] keys) {
+
+        var path = "$";
+
+        for (var k : keys) {
+
+            if (k.getValue().startsWith("[") && k.getValue().endsWith("]")) {
+                path += k.getValue();
+            } else {
+                path += "." + k.getValue();
+            }
+        }
+
+        return path;
     }
 }

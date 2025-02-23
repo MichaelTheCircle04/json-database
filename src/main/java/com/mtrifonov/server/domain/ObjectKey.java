@@ -1,8 +1,5 @@
 package com.mtrifonov.server.domain;
 
-import lombok.ToString;
-
-@ToString
 public class ObjectKey extends AbstractKey {
 
     private final boolean objectKey = true;
