@@ -20,9 +20,12 @@ public class JsonDatabase {
     private final ObjectMapper mapper;
     private final ReadWriteLock lock;
 
-    public JsonDatabase(String fileName, ObjectMapper mapper, ReadWriteLock lock) {
+    public JsonDatabase(String fileName, ObjectMapper mapper, ReadWriteLock lock) throws IOException {
 
         this.data = new File(fileName);
+        System.out.println(fileName);
+        data.createNewFile();
+        System.out.println("Created");
         this.mapper = mapper;
         this.lock = lock;
     }
@@ -48,7 +51,7 @@ public class JsonDatabase {
         lock.readLock().unlock();
 
         if (root.isMissingNode()) {
-            createRootNode(root, keys[0]);
+            root = createRootNode(keys[0]);
         }
 
         var cur = root;
@@ -268,13 +271,17 @@ public class JsonDatabase {
         }
     }
 
-    private void createRootNode(JsonNode root, Key key) {
+    private JsonNode createRootNode(Key key) {
+
+        JsonNode root;
 
         if (key instanceof ArrayKey) {
             root = mapper.createArrayNode();
         } else {
             root = mapper.createObjectNode();
         }
+
+        return root;
     }
 
     private IndexOutOfBoundsException getIndexOutOfBoundsException(int index) {

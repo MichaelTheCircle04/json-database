@@ -26,9 +26,9 @@ public class JsonDatabaseTest {
     public static JsonDatabase jsonDatabase;
 
     @BeforeAll
-    public static void setup() {
+    public static void setup() throws IOException {
         mapper = new ObjectMapper();
-        jsonDatabase = new JsonDatabase("C:\\vscode\\json-database\\src\\test\\resources\\db.json", mapper, new ReentrantReadWriteLock());
+        jsonDatabase = new JsonDatabase("C:/vscode/json-database/src/test/resources/db.json", mapper, new ReentrantReadWriteLock());
         
     }
 
