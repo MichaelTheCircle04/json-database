@@ -23,9 +23,7 @@ public class JsonDatabase {
     public JsonDatabase(String fileName, ObjectMapper mapper, ReadWriteLock lock) throws IOException {
 
         this.data = new File(fileName);
-        System.out.println(fileName);
         data.createNewFile();
-        System.out.println("Created");
         this.mapper = mapper;
         this.lock = lock;
     }
